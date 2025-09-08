@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Socket.IO Chat Rooms</title>
+    <style>
+      body { font-family: sans-serif; padding: 1rem; }
+      #chat { display: none; }
+      #messages { height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 0.5rem; margin-bottom: 1rem; }
+      #messages li { margin-bottom: 0.5rem; }
+    </style>
+  </head>
+  <body>
+    <h2>Join or Create a Room</h2>
+    <div id="login">
+      <input id="username" placeholder="Enter username" /><br /><br />
+      <input id="room" placeholder="Enter room name" /><br /><br />
+      <button onclick="createRoom()">Create Room</button>
+      <button onclick="joinRoom()">Join Room</button>
+    </div>
+
+    <div id="chat">
+      <h3 id="room-name"></h3>
+      <ul id="messages"></ul>
+      <form id="form">
+        <input id="input" autocomplete="off" /><button>Send</button>
+      </form>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket=io();
+
+        const form=document.getElementById('form');
+        const messages=document.getElementById('messages');
+        let username='';
+        let room='';
+
+          function createRoom(){
+           console.log("hello")
+            username=document.getElementById('username').value.trim();
+            room=document.getElementById('room').value.trim();
+
+            if(!username||!room){
+                return alert('Room name and username both aare required');
+            }
+
+            socket.emit('create:room',room,username,(res)=>{
+                if(res.success){
+                    enterChat();
+                }else{
+                    alert(res.message);
+                }
+            })
+        }
+
+
+         function joinRoom(){
+             username=document.getElementById('username').value.trim();
+             room=document.getElementById('room').value.trim();
+
+            if(!username||!room){
+                return alert('Both username and roomname is required');
+            }
+
+            socket.emit('join:room',room,username,(res)=>{
+                if(res.success){
+                    enterChat();
+                }
+                else{
+                    alert(res.message);
+                }
+            })
+        }
+
+
+     
+
+       
+        socket.on('receive:message',(msg)=>{
+            const item=document.createElement('li');
+            item.textContent=`${msg.username}: ${msg.message}`;
+            messages.appendChild(item);
+            window.scrollTo(0, document.body.scrollHeight);
+        })
+
+        function enterChat(){
+            document.getElementById('login').style.display='none';
+            document.getElementById('chat').style.display='block';
+            document.getElementById('room-name').textContent=`Room ${room}`;
+        }
+
+        const input=document.getElementById('input');
+
+        form.addEventListener('submit',(e)=>{
+            e.preventDefault();
+            let value=input.value.trim();
+            if(!value){
+                return alert(`message is null`);
+            }
+
+            socket.emit('send:message',value);
+            input.value='';
+        })
+
+        socket.on('user:joined',(msg)=>{
+            const child=document.createElement('li');
+            child.textContent=`🔵${msg}`;
+            messages.appendChild(child);       
+        })
+
+        socket.on('user:left',(msg)=>{
+            const item=document.createElement('li');
+            item.textContent=`🔵${msg}`;
+            messages.appendChild(item);
+        })
+
+    </script>
+    </body>
+</html>
