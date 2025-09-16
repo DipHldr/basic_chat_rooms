@@ -1,6 +1,3 @@
-
----
-
 ### Basic Chat Room Project Description:
 
 The **Basic Chat Room** project is a simple real-time web application that enables multiple users to communicate by sending and receiving text messages in a shared chat interface.
@@ -14,7 +11,6 @@ The **Basic Chat Room** project is a simple real-time web application that enabl
 * **Basic user identification**: Users can set a username before joining the chat.
 * **Simple interface**: Displays messages along with the sender’s username and timestamp.
 
----
 
 #### Technologies Used:
 
@@ -23,7 +19,6 @@ The **Basic Chat Room** project is a simple real-time web application that enabl
 * **WebSockets**: Socket.IO for real-time communication.
 * **Server**: Handles connections and broadcasts messages to all users.
 
----
 
 #### Flow:
 
@@ -33,7 +28,6 @@ The **Basic Chat Room** project is a simple real-time web application that enabl
 4. The server receives the message and broadcasts it to all connected clients.
 5. Each client updates the chat window in real time.
 
----
 
 #### Purpose:
 
